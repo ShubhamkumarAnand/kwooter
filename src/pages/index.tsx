@@ -5,7 +5,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-	const hello = api.example.hello.useQuery({ text: "from tRPC" });
+	const { data } = api.post.getAll.useQuery();
 	const user = useUser();
 	return (
 		<>
@@ -17,7 +17,14 @@ const Home: NextPage = () => {
 			<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
 				<div className="text-white border border-white p-2">
 					{!user.isSignedIn && <SignInButton />}
-					{(!!user.isSignedIn) && <SignOutButton />}
+					{!!user.isSignedIn && <SignOutButton />}
+				</div>
+				<div className="p-2 border border-white">
+					{data?.map((post) => (
+						<div className="p-1 mb-1 border border-white" key={post.id}>
+							{post.content}
+						</div>
+					))}
 				</div>
 			</main>
 		</>
