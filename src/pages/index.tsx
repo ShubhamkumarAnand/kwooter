@@ -1,13 +1,14 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import Image from "next/image";
+import { LoadingPage} from "~/components/Loading";
 dayjs.extend(relativeTime);
 
 const CreateWizard = () => {
@@ -62,7 +63,7 @@ const Home: NextPage = () => {
 	const { data, isLoading } = api.post.getAll.useQuery();
 
 	if (isLoading) {
-		return <div>is Loading..</div>;
+		return <LoadingPage />;
 	}
 	if (!data) {
 		return <div>Something went wrong</div>;
