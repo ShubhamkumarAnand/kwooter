@@ -32,7 +32,7 @@ const CreateWizard = () => {
 	);
 };
 
-type PostWithUser = RouterOutputs["post"]["getAll"][number];
+type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 const PostView = (props: PostWithUser) => {
 	const { post, author } = props;
@@ -58,16 +58,28 @@ const PostView = (props: PostWithUser) => {
 	);
 };
 
-const Home: NextPage = () => {
-	const user = useUser();
-	const { data, isLoading } = api.post.getAll.useQuery();
+const Feed = () => {
+	const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
 
-	if (isLoading) {
-		return <LoadingPage />;
-	}
-	if (!data) {
-		return <div>Something went wrong</div>;
-	}
+	if(postsLoading) return <LoadingPage/>;
+	if(!data) return <div>Something went Wrong</div>;
+
+	return (
+		<div className="flex flex-col align-middle">
+			{[...data, ...data]?.map((fullPost) => (
+				<PostView {...fullPost} key={fullPost.post.id} />
+			))}
+		</div>			
+	)
+}
+
+const Home: NextPage = () => {
+	const {isLoaded: userLoaded, isSignedIn} = useUser();
+	
+	// Start Fetching Early 
+	api.posts.getAll.useQuery();
+
+	if (!userLoaded) return <div />;
 
 	return (
 		<>
@@ -80,19 +92,15 @@ const Home: NextPage = () => {
 				<div className="h-full w-full md:max-w-2xl border-slate-400 border-x">
 					<div className="flex p-4 border-b border-slate-400">
 						<div>
-							{!user.isSignedIn && (
+							{!isSignedIn && (
 								<div className="flex justify-center text-white border border-white p-2 rounded">
 									<SignInButton />
 								</div>
 							)}
 						</div>
-						{user.isSignedIn && <CreateWizard />}
+						{isSignedIn && <CreateWizard />}
 					</div>
-					<div className="flex flex-col align-middle">
-						{[...data, ...data]?.map((fullPost) => (
-							<PostView {...fullPost} key={fullPost.post.id} />
-						))}
-					</div>
+					<Feed/>
 				</div>
 			</main>
 		</>
