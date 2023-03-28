@@ -106,7 +106,12 @@ const PostView = (props: PostWithUser) => {
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
 
-  if (postsLoading) return <LoadingPage />;
+  if (postsLoading)
+    return (
+      <div className="flex justify-center mt-32">
+        <LoadingPage />
+      </div>
+    );
   if (!data) return <div>Something went Wrong</div>;
 
   return (
