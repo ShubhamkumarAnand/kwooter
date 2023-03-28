@@ -1,6 +1,6 @@
 export const LoadingSpinner = (props: { size?: number }) => {
 	return (
-		<div role="status" className="grid h-screen place-items-center">
+		<div role="status">
 			<svg
 				aria-hidden="true"
 				className="inline text-gray-200 animate-spin dark:text-gray-600 fill-green-500"
