@@ -7,6 +7,24 @@ import { prisma } from "~/server/db";
 import superjson from "superjson";
 import { PageLayout } from "~/components/PageLayout";
 import Image from "next/image";
+import { LoadingSpinner } from "~/components/Loading";
+import { PostView } from "~/components/PostView";
+
+const ProfileFeed = (props: { userId: string }) => {
+  const { data, isLoading } = api.posts.getPostbyUserId.useQuery({
+    userId: props.userId,
+  });
+  if (isLoading) return <LoadingSpinner size={20} />;
+  if (!data || data.length === 0) return <div>User Has no Post</div>;
+  return (
+    <div className="flex flex-col align-middle">
+      {data.map((post) => (
+        // <PostView post={post} key={post.id} />
+        <div key={post.id}>Users Post</div>
+      ))}
+    </div>
+  );
+};
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
@@ -29,8 +47,11 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           />
         </div>
         <div className="h-16"></div>
-        <div className="text-white p-4 text-2xl font-bold">{`@${data.username ?? ""}`}</div>
+        <div className="p-4 text-2xl font-bold text-white">{`@${
+          data.username ?? ""
+        }`}</div>
         <div className="border-b border-slate-400"></div>
+        <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
   );
