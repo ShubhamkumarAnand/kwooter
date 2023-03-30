@@ -7,20 +7,19 @@ import { prisma } from "~/server/db";
 import superjson from "superjson";
 import { PageLayout } from "~/components/PageLayout";
 import Image from "next/image";
-import { LoadingSpinner } from "~/components/Loading";
+import { LoadingPage } from "~/components/Loading";
 import { PostView } from "~/components/PostView";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostbyUserId.useQuery({
     userId: props.userId,
   });
-  if (isLoading) return <LoadingSpinner size={20} />;
+  if (isLoading) return <div className="flex justify-center mt-20"><LoadingPage /></div>;
   if (!data || data.length === 0) return <div>User Has no Post</div>;
   return (
     <div className="flex flex-col align-middle">
-      {data.map((post) => (
-        // <PostView post={post} key={post.id} />
-        <div key={post.id}>Users Post</div>
+      {data.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
       ))}
     </div>
   );
